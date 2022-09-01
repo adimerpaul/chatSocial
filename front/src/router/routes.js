@@ -1,4 +1,5 @@
 import Login from "pages/Login";
+import SignUp from "pages/SignUp";
 
 const routes = [
   {
@@ -12,7 +13,10 @@ const routes = [
     path: '/login',
     component: Login
   },
-
+  {
+    path: '/signup',
+    component: SignUp
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
