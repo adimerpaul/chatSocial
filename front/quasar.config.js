@@ -44,7 +44,9 @@ module.exports = configure(function (ctx) {
       'themify',
       'line-awesome',
       'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
+      'material-icons-round',
+      'material-icons-outlined',
+      'material-icons-sharp',
       'roboto-font', // optional, you are not bound to it
       'material-icons', // optional, you are not bound to it
     ],
@@ -76,6 +78,11 @@ module.exports = configure(function (ctx) {
       chainWebpack (chain) {
         chain.plugin('eslint-webpack-plugin')
           .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }])
+      },
+      env: {
+        API: ctx.dev
+          ? 'http://localhost:8000/api/'
+          : 'https://prod.api.com'
       }
 
     },
@@ -92,7 +99,6 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework
     framework: {
       config: {},
-
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
@@ -104,7 +110,9 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Notify'
+      ]
     },
 
     // animations: 'all', // --- includes all animations

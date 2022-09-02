@@ -9,22 +9,26 @@
             <div class="text-h2 text-center q-pa-lg text-black text-bold">Tu Cuenta</div>
             <q-card flat bordered>
               <q-card-section >
-                <q-form class="q-pa-lg">
+                <q-form class="q-pa-lg" @submit.prevent="login">
                   <div class="row">
                     <div class="col-12">
                       <q-input outlined v-model="email" label="Email" type="email" />
                     </div>
                     <div class="col-12 q-pt-lg">
-                      <q-input outlined v-model="password" label="Contraseña" type="password" />
+                      <q-input outlined v-model="password" label="Contraseña" :type="typePassword?'password':'text'" >
+                        <template v-slot:append>
+                          <q-icon @click="typePassword=!typePassword" :name="typePassword?'visibility':'visibility_off'" />
+                        </template>
+                      </q-input>
                     </div>
                     <div class="col-12 q-py-xs">
                       <q-checkbox v-model="remember" class="grey" label="Recuérdame" size="30px" />
                     </div>
                     <div class="col-12 q-pt-xs">
-                      <q-btn size="22px" class="full-width bold" color="primary" label="Iniciar Sesión" type="submit" no-caps />
+                      <q-btn size="22px" :loading="loading" class="full-width bold" color="primary" label="Iniciar Sesión" type="submit" no-caps />
                     </div>
                     <div class="col-12 q-pt-xs">
-                      <q-btn size="22px" outline class="full-width bold" color="primary" label="Registrate" type="submit" no-caps />
+                      <q-btn to="signup" size="22px" outline class="full-width bold" color="primary" label="Registrate" type="submit" no-caps />
                     </div>
                     <div class="col-12 text-center q-py-md">
                       <a href="" class="text-blue-8 ">¿Olvidaste tu contraseña?</a>
@@ -53,13 +57,43 @@
 </template>
 
 <script>
+import {useCounterStore} from "stores/example-store";
+
 export default {
   name: `Login`,
   data () {
     return {
       email: '',
       password: '',
-      remember:false
+      remember:false,
+      typePassword:true,
+      loading:false,
+      store:useCounterStore()
+    }
+  },
+  methods:{
+    login(){
+      this.loading=true
+      this.$api.post('login', {
+        email: this.email,
+        password: this.password,
+      }).then(res => {
+        this.$router.push('/')
+        this.store.user=res.data.user
+        this.store.isLoggedIn=true
+        this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
+
+      }).catch(error => {
+        console.log(error)
+        this.$q.notify({
+          message: error.response.data.message,
+          color: 'negative',
+          position: 'top',
+          timeout: 2000
+        })
+      }).finally(()=>{
+        this.loading=false
+      })
     }
   }
 }

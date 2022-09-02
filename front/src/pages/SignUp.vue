@@ -6,7 +6,7 @@
           <div class="col-1 col-sm-4"></div>
           <div class="col-10 col-sm-4">
             <div class="text-subtitle1 text-center q-pt-lg text-grey">CUENTA</div>
-            <div class="text-h2 text-center q-pa-lg text-black text-bold">Crea Tu Cuenta</div>
+            <div class="text-h3 text-center q-pa-lg text-black text-bold">Crea Cuenta</div>
             <q-card flat bordered>
               <q-card-section >
                 <q-form class="q-px-lg q-py-md">
@@ -27,7 +27,7 @@
                       <q-btn size="22px" outline class="full-width bold" color="primary" label="Registrate" type="submit" no-caps />
                     </div>
                     <div class="col-12 q-pt-xs">
-                      <q-btn size="22px" class="full-width bold" color="primary" label="Iniciar Sesión" type="submit" no-caps />
+                      <q-btn size="22px" to="login" class="full-width bold" color="primary" label="Iniciar Sesión" type="submit" no-caps />
                     </div>
 <!--                    <div class="col-12 text-center q-py-md">-->
 <!--                      <a href="" class="text-blue-8 ">¿Olvidaste tu contraseña?</a>-->

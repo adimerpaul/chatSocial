@@ -1,21 +1,108 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="lHh Lpr lFf" class="bg-grey-2">
+    <q-header class="bg-grey-2">
       <q-toolbar>
         <q-btn
           flat
           dense
           round
+          color="primary"
           icon="menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
         <q-toolbar-title class="text-bold">
-          Your Account
+<!--          Your Account-->
         </q-toolbar-title>
+        <div class="row">
+          <div class="col-8">
+            <q-input dense rounded outlined v-model="search" placeholder="Buscar">
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-2 flex flex-center">
+            <q-btn
+              flat
+              dense
+              round
+              color="primary"
+              icon="o_notifications"
+              aria-label="Notifications">
+              <q-badge color="primary" floating transparent>
+                4
+              </q-badge>
+            </q-btn>
+          </div>
+          <div class="col-12 flex flex-center">
+            <q-btn-dropdown
+              class="q-pa-none q-ma-none"
+              no-icon-animation
+              outline
+              split
+              v-model="menu"
+              @click="menu= !menu"
+            >
+              <template v-slot:label >
+                <q-avatar size="35px" >
+                  <img src="https://cdn.quasar.dev/img/avatar.png" />
+                  <q-badge floating color="teal"></q-badge>
+                </q-avatar>
+              </template>
 
-        <div>Quasar v{{ $q.version }}</div>
+              <q-list>
+                <q-item clickable v-close-popup >
+                  <q-item-section avatar>
+                    <q-avatar icon="folder" color="primary" text-color="white" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Photos</q-item-label>
+                    <q-item-label caption>February 22, 2016</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-icon name="info" color="amber" />
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup >
+                  <q-item-section avatar>
+                    <q-avatar icon="assignment" color="secondary" text-color="white" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Vacation</q-item-label>
+                    <q-item-label caption>February 22, 2016</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-icon name="info" color="amber" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+<!--            <q-avatar size="35px" push>-->
+<!--              <img src="https://cdn.quasar.dev/img/avatar.png" />-->
+<!--              <q-badge floating color="teal"></q-badge>-->
+<!--              <q-popup-proxy >-->
+<!--                <q-list bordered class="bg-grey-2">-->
+<!--                  <q-item clickable v-ripple>-->
+<!--                    <q-item-section avatar>-->
+<!--                      <q-icon color="primary" name="perm_contact_calendar" />-->
+<!--                    </q-item-section>-->
+<!--                    <q-item-section>Perfil</q-item-section>-->
+<!--                  </q-item>-->
+<!--                  <q-separator/>-->
+<!--                  <q-item clickable v-ripple>-->
+<!--                    <q-item-section avatar>-->
+<!--                      <q-icon color="primary" name="logout" />-->
+<!--                    </q-item-section>-->
+<!--                    <q-item-section>Salir</q-item-section>-->
+<!--                  </q-item>-->
+<!--                </q-list>-->
+<!--              </q-popup-proxy>-->
+<!--            </q-avatar>-->
+
+          </div>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -25,17 +112,29 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
+        <q-item-label class="q-pa-xs">
+          <div class="row">
+            <div class="col-3 flex flex-center">
+<!--              <q-avatar size="48px">-->
+                <q-icon size="48px" name="o_question_answer" />
+<!--              </q-avatar>-->
+            </div>
+            <div class="col-9">
+              <div class="text-h6 text-bold">Chat Social</div>
+              <div class="text-caption">{{store.version}}</div>
+            </div>
+          </div>
         </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-separator />
+        <q-item-label header class="q-py-none q-pt-xs">Usuarios Conectados</q-item-label>
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+          <q-item-section>
+            Inicio
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -46,71 +145,23 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import {useCounterStore} from "stores/example-store";
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-export default defineComponent({
+export default {
   name: 'MainLayout',
 
-  components: {
-    EssentialLink
-  },
-
-  setup () {
-    const leftDrawerOpen = ref(false)
-
+  data () {
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      leftDrawerOpen: false,
+      search: '',
+      store:useCounterStore(),
+      menu:false,
+    }
+  },
+  methods: {
+    toggleLeftDrawer () {
+      this.leftDrawerOpen = !this.leftDrawerOpen
     }
   }
-})
+}
 </script>
