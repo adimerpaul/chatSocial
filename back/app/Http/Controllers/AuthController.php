@@ -35,6 +35,7 @@ class AuthController extends Controller
             $newUser->externalId = $user->id;
             $newUser->externalAuth = $provider;
             $newUser->avatar = $nombreArchivo;
+            $newUser->fechaConexion=now();
             $newUser->fechaLimite=date('Y-m-d', strtotime(now(). ' + 360 days'));
             $newUser->save();
             $token=$newUser->createToken('web')->plainTextToken;

@@ -1,17 +1,29 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+  <q-page class="flex column">
+    <div class="q-pa-md column col justify-end">
+      <q-chat-message
+        v-for="c in store.chats"
+        :key="c.id"
+        :text="[c.message]"
+        :sent="c.userEnviado_id==store.user.id"
+      />
+    </div>
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {useCounterStore} from "stores/example-store";
 
-export default defineComponent({
-  name: 'IndexPage'
-})
+export default {
+  name: 'IndexPage',
+  data(){
+    return{
+      store:useCounterStore()
+    }
+  },
+  created() {
+  },
+  methods:{
+  }
+}
 </script>

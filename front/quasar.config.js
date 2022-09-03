@@ -86,6 +86,9 @@ module.exports = configure(function (ctx) {
         API_FRONT: ctx.dev
           ? 'http://localhost:8080/'
           : 'https://prod.api.com/',
+        API_SOCKET: ctx.dev
+          ? 'http://localhost:3000/'
+          : 'https://prod.api.com/',
       }
 
     },

@@ -23,9 +23,9 @@ Route::post('/upload', [\App\Http\Controllers\UploadController::class,'upload'])
 Route::post('sociallogin/{provider}', [\App\Http\Controllers\AuthController::class,'SocialSignup']);
 
 Route::group(['middleware'=>'auth:sanctum'],function (){
+    Route::resource('chat',\App\Http\Controllers\ChatController::class);
     Route::post('/me', [\App\Http\Controllers\UserController::class,'me']);
     Route::post('/logout', [\App\Http\Controllers\UserController::class,'logout']);
-    Route::resource('/negocio',\App\Http\Controllers\NegocioController::class);
     Route::resource('/user',\App\Http\Controllers\UserController::class);
     Route::post('/uppassword',[\App\Http\Controllers\UserController::class,'uppassword']);
     Route::resource('/categoria',\App\Http\Controllers\CategoriaController::class);

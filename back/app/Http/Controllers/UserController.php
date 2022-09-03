@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,8 +10,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 class UserController extends Controller
 {
-    public function index(){
-        return User::where('id','!=',1)->get();
+    public function index(Request $request){
+        return User::where('id','!=',1)->where('id','!=',$request->user()->id)->get();
+    }
+    public function show($id)
+    {
+        $chats= Chat::whereRaw("(userEnviado_id=1 AND userRecibido_id=$id)OR(userEnviado_id=$id AND userRecibido_id=1)")->get();
+        return $chats;
     }
     public function login(Request $request){
         $request->validate([
@@ -42,6 +48,7 @@ class UserController extends Controller
         $user->email=$request->email;
         $user->password=Hash::make( $request->password);
         $user->fechaLimite=date('Y-m-d', strtotime(now(). ' + 360 days'));
+        $user->fechaConexion=now();
         $user->save();
         $token=$user->createToken('web')->plainTextToken;
         return response()->json([
