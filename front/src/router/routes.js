@@ -1,12 +1,13 @@
 import Login from "pages/Login";
 import SignUp from "pages/SignUp";
+import IndexPage from "pages/IndexPage";
 
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: IndexPage ,meta: {requiresAuth: true}}
     ]
   },
   {

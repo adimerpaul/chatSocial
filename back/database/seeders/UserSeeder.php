@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'name' => 'admin',
                 'email' => 'admin@test.com',
                 'password' => bcrypt('admin'),
+                'fechaLimite' => date('Y-m-d', strtotime(now(). ' + 360 days')),
             ]
         ]);
     }

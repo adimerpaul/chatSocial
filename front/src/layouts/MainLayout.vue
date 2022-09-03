@@ -12,9 +12,8 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title class="text-bold">
-<!--          Your Account-->
         </q-toolbar-title>
-        <div class="row">
+        <div class="row q-pt-xs">
           <div class="col-8">
             <q-input dense rounded outlined v-model="search" placeholder="Buscar">
               <template v-slot:prepend>
@@ -35,72 +34,29 @@
               </q-badge>
             </q-btn>
           </div>
-          <div class="col-12 flex flex-center">
-            <q-btn-dropdown
-              class="q-pa-none q-ma-none"
-              no-icon-animation
-              outline
-              split
-              v-model="menu"
-              @click="menu= !menu"
-            >
-              <template v-slot:label >
-                <q-avatar size="35px" >
-                  <img src="https://cdn.quasar.dev/img/avatar.png" />
-                  <q-badge floating color="teal"></q-badge>
+          <div class="col-2 flex flex-center">
+              <q-btn round>
+                <q-avatar size="38px">
+                  <img v-if="store.user.avatar!=undefined" :src="url+'../imagenes/'+store.user.avatar">
                 </q-avatar>
-              </template>
-
-              <q-list>
-                <q-item clickable v-close-popup >
-                  <q-item-section avatar>
-                    <q-avatar icon="folder" color="primary" text-color="white" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>Photos</q-item-label>
-                    <q-item-label caption>February 22, 2016</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-icon name="info" color="amber" />
-                  </q-item-section>
-                </q-item>
-
-                <q-item clickable v-close-popup >
-                  <q-item-section avatar>
-                    <q-avatar icon="assignment" color="secondary" text-color="white" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>Vacation</q-item-label>
-                    <q-item-label caption>February 22, 2016</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-icon name="info" color="amber" />
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-<!--            <q-avatar size="35px" push>-->
-<!--              <img src="https://cdn.quasar.dev/img/avatar.png" />-->
-<!--              <q-badge floating color="teal"></q-badge>-->
-<!--              <q-popup-proxy >-->
-<!--                <q-list bordered class="bg-grey-2">-->
-<!--                  <q-item clickable v-ripple>-->
-<!--                    <q-item-section avatar>-->
-<!--                      <q-icon color="primary" name="perm_contact_calendar" />-->
-<!--                    </q-item-section>-->
-<!--                    <q-item-section>Perfil</q-item-section>-->
-<!--                  </q-item>-->
-<!--                  <q-separator/>-->
-<!--                  <q-item clickable v-ripple>-->
-<!--                    <q-item-section avatar>-->
-<!--                      <q-icon color="primary" name="logout" />-->
-<!--                    </q-item-section>-->
-<!--                    <q-item-section>Salir</q-item-section>-->
-<!--                  </q-item>-->
-<!--                </q-list>-->
-<!--              </q-popup-proxy>-->
-<!--            </q-avatar>-->
-
+              <q-menu>
+                <q-list style="min-width: 100px">
+                  <q-item clickable v-ripple>
+                    <q-item-section avatar>
+                      <q-icon color="primary" name="perm_contact_calendar" />
+                    </q-item-section>
+                    <q-item-section>{{store.user.name}}</q-item-section>
+                  </q-item>
+                  <q-separator />
+                  <q-item clickable v-ripple @click="logout">
+                    <q-item-section avatar>
+                      <q-icon color="primary" name="logout" />
+                    </q-item-section>
+                    <q-item-section>Salir</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
           </div>
         </div>
       </q-toolbar>
@@ -149,9 +105,9 @@ import {useCounterStore} from "stores/example-store";
 
 export default {
   name: 'MainLayout',
-
   data () {
     return {
+      url:process.env.API,
       leftDrawerOpen: false,
       search: '',
       store:useCounterStore(),
@@ -159,6 +115,30 @@ export default {
     }
   },
   methods: {
+    logout(){
+      this.$q.dialog({
+        message:'¿Quieres cerrar sesión?',
+        title:"Salir",
+        ok:{
+          push:true
+        },
+        cancel:{
+          push:true,
+          color:'negative'
+        }
+      }).onOk(()=>{
+        this.$q.loading.show()
+        this.$api.post('logout').then(res=>{
+          this.$api.defaults.headers.common['Authorization']=''
+          this.store.user={}
+          this.store.negocio={}
+          localStorage.removeItem('tokenmi')
+          this.store.isLoggedIn=false
+          this.$router.push('/login')
+          this.$q.loading.hide()
+        })
+      })
+    },
     toggleLeftDrawer () {
       this.leftDrawerOpen = !this.leftDrawerOpen
     }

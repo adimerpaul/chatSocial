@@ -28,23 +28,26 @@ class UserController extends Controller
         return response()->json([
             'token'=>$user->createToken('web')->plainTextToken,
             'user'=>$user
-        ],200);;
+        ],200);
     }
     public function register(Request $request){
         $request->validate([
             'email'=>'required|unique:users|email',
-            'carnet'=>'required|unique:users',
+            'name'=>'required|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
         ]);
         $user=new User();
-        $user->name= strtoupper( $request->name);
+        $user->name= ( $request->name);
         $user->email=$request->email;
         $user->password=Hash::make( $request->password);
-        $user->fechaLimite=date('Y-m-d', strtotime(now(). ' + 7 days'));;
+        $user->fechaLimite=date('Y-m-d', strtotime(now(). ' + 360 days'));
         $user->save();
-        $permiso = Permiso::find([3]);
-        $user->permisos()->attach($permiso);
-        $token=$user->createToken('auth_token')->plainTextToken;
-        return response()->json(['token'=>$token,'user'=>User::where('id',$user->id)->with('permisos')->with('unit')->firstOrFail()],200);;
+        $token=$user->createToken('web')->plainTextToken;
+        return response()->json([
+            'token'=>$token,
+            'user'=>User::find($user->id)
+        ],200);
     }
     public function store(Request $request){
         $this->validate($request, [

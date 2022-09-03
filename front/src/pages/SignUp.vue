@@ -9,19 +9,27 @@
             <div class="text-h3 text-center q-pa-lg text-black text-bold">Crea Cuenta</div>
             <q-card flat bordered>
               <q-card-section >
-                <q-form class="q-px-lg q-py-md">
+                <q-form class="q-px-lg q-py-md" @submit.prevent="signUp">
                   <div class="row">
                     <div class="col-12">
-                      <q-input outlined v-model="name" label="Nombre Completo" type="email" />
+                      <q-input outlined v-model="name" label="Nombre Completo" type="name" required />
                     </div>
                     <div class="col-12 q-pt-lg">
-                      <q-input outlined v-model="email" label="Email" type="email" />
+                      <q-input outlined v-model="email" label="Email" type="email" required/>
                     </div>
                     <div class="col-12 q-pt-lg">
-                      <q-input outlined v-model="password" label="Contraseña" type="password" />
+                      <q-input outlined v-model="password" label="Contraseña" :type="typePassword?'password':'text'" required>
+                        <template v-slot:append>
+                          <q-icon @click="typePassword=!typePassword" :name="typePassword?'visibility':'visibility_off'" />
+                        </template>
+                      </q-input>
                     </div>
                     <div class="col-12 q-pt-lg">
-                      <q-input outlined v-model="confirmPassword" label="Confirmar Contraseña" type="password" />
+                      <q-input outlined v-model="password_confirmation" label="Confirmar Contraseña" :type="typePassword?'password':'text'" required>
+                        <template v-slot:append>
+                          <q-icon @click="typePassword=!typePassword" :name="typePassword?'visibility':'visibility_off'" />
+                        </template>
+                      </q-input>
                     </div>
                     <div class="col-12 q-pt-lg">
                       <q-btn size="22px" outline class="full-width bold" color="primary" label="Registrate" type="submit" no-caps />
@@ -44,9 +52,10 @@
                   </div>
                 </q-form>
               </q-card-section>
-              <div class="text-subtitle1 text-center text-caption q-pt-lg text-grey">AL INICIAR SESIÓN, USTED ACEPTA LOS
-                <a href="" class="text-blue-8 ">TÉRMINOS DEL SERVICIO</a> Y <a href="" class="text-blue-8 ">LA POLÍTICA DE PRIVACIDAD</a></div>
             </q-card>
+            <div class="text-subtitle1 text-center text-caption q-pt-lg text-grey">AL INICIAR SESIÓN, USTED ACEPTA LOS
+              <a href="" class="text-blue-8 ">TÉRMINOS DEL SERVICIO</a> Y <a href="" class="text-blue-8 ">LA POLÍTICA DE PRIVACIDAD</a>
+            </div>
           </div>
           <div class="col-1 col-sm-4"></div>
         </div>
@@ -56,15 +65,59 @@
 </template>
 
 <script>
+import {useCounterStore} from "stores/example-store";
+
 export default {
-  name: `Login`,
+  name: `SignUp`,
   data () {
     return {
       email: '',
       name: '',
       password: '',
-      confirmPassword: '',
-      remember:false
+      password_confirmation: '',
+      store:useCounterStore(),
+      typePassword:true,
+    }
+  },
+  mounted() {
+    if (this.store.isLoggedIn){
+      this.$router.push('/')
+    }
+  },
+  methods: {
+    signUp () {
+      this.$q.loading.show()
+      this.$api.post('register', {
+        email: this.email,
+        name: this.name,
+        password: this.password,
+        password_confirmation: this.password_confirmation,
+      }).then((res) => {
+        this.$q.notify({
+          message: 'Usuario creado correctamente',
+          color: 'positive',
+          icon: 'check_circle',
+          position: 'top'
+        })
+        this.$router.push('/')
+        this.store.user=res.data.user
+        this.store.isLoggedIn=true
+        this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
+        localStorage.setItem('tokenChat',res.data.token)
+      })
+        .catch((error) => {
+        console.log(error)
+        this.$q.notify({
+          message: error.response.data.message,
+          color: 'negative',
+          icon: 'error',
+          position: 'top'
+        })
+      })
+        .finally(() => {
+        this.$q.loading.hide()
+      })
+
     }
   }
 }

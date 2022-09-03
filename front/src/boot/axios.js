@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
+import {useCounterStore} from "stores/example-store";
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -9,7 +10,7 @@ import axios from 'axios'
 // for each client)
 const api = axios.create({ baseURL: process.env.API })
 
-export default boot(({ app }) => {
+export default boot(({ app ,router}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios
@@ -17,6 +18,21 @@ export default boot(({ app }) => {
   //       so you won't necessarily have to import axios in each vue file
 
   app.config.globalProperties.$api = api
+  const token = localStorage.getItem('tokenChat')
+  if (token) {
+    app.config.globalProperties.$api.defaults.headers.common['Authorization'] = 'Bearer '+token
+    app.config.globalProperties.$api.post('me').then(res=>{
+      console.log(res.data)
+      useCounterStore().user=res.data
+      useCounterStore().isLoggedIn=true
+    }).catch(err=>{
+      app.config.globalProperties.$api.defaults.headers.common['Authorization']=''
+      useCounterStore().user={}
+      localStorage.removeItem('tokenChat')
+      useCounterStore().isLoggedIn=false
+      router.push('/login')
+    })
+  }
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 })

@@ -12,10 +12,10 @@
                 <q-form class="q-pa-lg" @submit.prevent="login">
                   <div class="row">
                     <div class="col-12">
-                      <q-input outlined v-model="email" label="Email" type="email" />
+                      <q-input outlined v-model="email" label="Email" type="email" required />
                     </div>
                     <div class="col-12 q-pt-lg">
-                      <q-input outlined v-model="password" label="Contraseña" :type="typePassword?'password':'text'" >
+                      <q-input outlined v-model="password" label="Contraseña" :type="typePassword?'password':'text'" required >
                         <template v-slot:append>
                           <q-icon @click="typePassword=!typePassword" :name="typePassword?'visibility':'visibility_off'" />
                         </template>
@@ -45,9 +45,10 @@
                   </div>
                 </q-form>
               </q-card-section>
-              <div class="text-subtitle1 text-center text-caption q-pt-lg text-grey">AL INICIAR SESIÓN, USTED ACEPTA LOS
-                <a href="" class="text-blue-8 ">TÉRMINOS DEL SERVICIO</a> Y <a href="" class="text-blue-8 ">LA POLÍTICA DE PRIVACIDAD</a></div>
             </q-card>
+            <div class="text-subtitle1 text-center text-caption q-pt-lg text-grey">AL INICIAR SESIÓN, USTED ACEPTA LOS
+              <a href="" class="text-blue-8 ">TÉRMINOS DEL SERVICIO</a> Y <a href="" class="text-blue-8 ">LA POLÍTICA DE PRIVACIDAD</a>
+            </div>
           </div>
           <div class="col-1 col-sm-4"></div>
         </div>
@@ -71,6 +72,11 @@ export default {
       store:useCounterStore()
     }
   },
+  mounted() {
+    if (this.store.isLoggedIn){
+      this.$router.push('/')
+    }
+  },
   methods:{
     login(){
       this.loading=true
@@ -78,11 +84,17 @@ export default {
         email: this.email,
         password: this.password,
       }).then(res => {
+        this.$q.notify({
+          message: 'Bienvenido',
+          color: 'positive',
+          icon: 'check_circle',
+          position: 'top'
+        })
         this.$router.push('/')
         this.store.user=res.data.user
         this.store.isLoggedIn=true
         this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
-
+        localStorage.setItem('tokenChat',res.data.token)
       }).catch(error => {
         console.log(error)
         this.$q.notify({
