@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->date('fechaLimite');
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('avatar')->default('avatar.png');
             $table->string('externalId')->nullable();
             $table->string('externalAuth')->nullable();

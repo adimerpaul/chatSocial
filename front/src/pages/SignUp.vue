@@ -5,8 +5,8 @@
         <div class="row">
           <div class="col-1 col-sm-4"></div>
           <div class="col-10 col-sm-4">
-            <div class="text-subtitle1 text-center q-pt-lg text-grey">CUENTA</div>
-            <div class="text-h3 text-center q-pa-lg text-black text-bold">Crea Cuenta</div>
+            <div class="text-subtitle1 text-center q-pt-xs text-grey">CUENTA</div>
+            <div class="text-h3 text-center q-pa-xs text-black text-bold">Crea Cuenta</div>
             <q-card flat bordered>
               <q-card-section >
                 <q-form class="q-px-lg q-py-md" @submit.prevent="signUp">
@@ -40,15 +40,15 @@
 <!--                    <div class="col-12 text-center q-py-md">-->
 <!--                      <a href="" class="text-blue-8 ">¿Olvidaste tu contraseña?</a>-->
 <!--                    </div>-->
-                    <div class="col-12 text-center q-py-xs text-caption">
-                      <div class="linea"><span>O INICIAR SESIÓN CON</span></div>
-                    </div>
-                    <div class="col-6 q-pt-md q-pr-xs">
-                      <q-btn outline icon="fa-brands fa-facebook" color="primary" class="full-width "/>
-                    </div>
-                    <div class="col-6 q-pt-md q-pl-xs">
-                      <q-btn outline icon="fa-brands fa-google" color="primary" class="full-width "/>
-                    </div>
+<!--                    <div class="col-12 text-center q-py-xs text-caption">-->
+<!--                      <div class="linea"><span>O INICIAR SESIÓN CON</span></div>-->
+<!--                    </div>-->
+<!--                    <div class="col-6 q-pt-md q-pr-xs">-->
+<!--                      <q-btn outline icon="fa-brands fa-facebook" color="primary" class="full-width "/>-->
+<!--                    </div>-->
+<!--                    <div class="col-6 q-pt-md q-pl-xs">-->
+<!--                      <q-btn outline icon="fa-brands fa-google" color="primary" class="full-width "/>-->
+<!--                    </div>-->
                   </div>
                 </q-form>
               </q-card-section>

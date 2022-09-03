@@ -5,8 +5,8 @@
         <div class="row">
           <div class="col-1 col-sm-4"></div>
           <div class="col-10 col-sm-4">
-            <div class="text-subtitle1 text-center q-pt-lg text-grey">CUENTA</div>
-            <div class="text-h2 text-center q-pa-lg text-black text-bold">Tu Cuenta</div>
+            <div class="text-subtitle1 text-center q-pt-xs text-grey">CUENTA</div>
+            <div class="text-h2 text-center q-pa-xs text-black text-bold">Tu Cuenta</div>
             <q-card flat bordered>
               <q-card-section >
                 <q-form class="q-pa-lg" @submit.prevent="login">
@@ -30,17 +30,17 @@
                     <div class="col-12 q-pt-xs">
                       <q-btn to="signup" size="22px" outline class="full-width bold" color="primary" label="Registrate" type="submit" no-caps />
                     </div>
-                    <div class="col-12 text-center q-py-md">
+                    <div class="col-12 text-center q-py-none">
                       <a href="" class="text-blue-8 ">¿Olvidaste tu contraseña?</a>
                     </div>
-                    <div class="col-12 text-center q-py-xs text-caption">
+                    <div class="col-12 text-center q-py-none text-caption">
                       <div class="linea"><span>O INICIAR SESIÓN CON</span></div>
                     </div>
                     <div class="col-6 q-pt-md q-pr-xs">
                       <q-btn outline icon="fa-brands fa-facebook" color="primary" class="full-width "/>
                     </div>
                     <div class="col-6 q-pt-md q-pl-xs">
-                      <q-btn outline icon="fa-brands fa-google" color="primary" class="full-width "/>
+                      <q-btn outline @click="useAuthProvider('google', null)" icon="fa-brands fa-google" color="primary" class="full-width "/>
                     </div>
                   </div>
                 </q-form>
@@ -59,6 +59,7 @@
 
 <script>
 import {useCounterStore} from "stores/example-store";
+import { Providers} from 'universal-social-auth'
 
 export default {
   name: `Login`,
@@ -78,6 +79,40 @@ export default {
     }
   },
   methods:{
+    useAuthProvider (provider, proData) {
+      const pro = proData
+      const ProData = pro || Providers[provider]
+      this.$q.loading.show()
+      this.$Oauth.authenticate(provider, ProData).then((response) => {
+          if (response.code) {
+            this.$api.post('sociallogin/'+provider,response).then(res => {
+              // console.log(response.data)
+              this.$q.loading.hide()
+              this.$q.notify({
+                message: 'Bienvenido',
+                color: 'positive',
+                icon: 'check_circle',
+                position: 'top'
+              })
+              this.$router.push('/')
+              this.store.user=res.data.user
+              this.store.isLoggedIn=true
+              this.$api.defaults.headers.common['Authorization'] = 'Bearer '+res.data.token
+              localStorage.setItem('tokenChat',res.data.token)
+            }).catch(err => {
+              console.log({err:err})
+            }).finally(() => {
+              this.$q.loading.hide()
+            })
+          }else{
+            this.$q.loading.hide()
+          }
+      }).catch((err) => {
+        console.log(err)
+      }).finally(() => {
+        // this.$q.loading.hide()
+      })
+    },
     login(){
       this.loading=true
       this.$api.post('login', {

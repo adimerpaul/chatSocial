@@ -18,6 +18,12 @@ const routes = [
     path: '/signup',
     component: SignUp
   },
+  {
+    path: '/auth/:provider/callback',
+    component: {
+      template: '<div class="auth-component"></div>'
+    }
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
