@@ -6,11 +6,12 @@ export const useCounterStore = defineStore('counter', {
     users: [],
     userChat: {},
     chats: [],
+    socketShow: false,
     isLoggedIn:!!localStorage.getItem('tokenChat'),
     version: '1.0.0',
   }),
   getters: {
-    doubleCount: (state) => state.counter * 2,
+    messages: (state) => state.chats,
   },
   actions: {
     increment() {

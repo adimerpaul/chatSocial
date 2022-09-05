@@ -14,4 +14,8 @@ class Chat extends Model
         "userEnviado_id",
         "userRecibido_id",
     ];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 }

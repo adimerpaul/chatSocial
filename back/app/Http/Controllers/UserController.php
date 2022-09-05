@@ -11,11 +11,25 @@ use Illuminate\Validation\ValidationException;
 class UserController extends Controller
 {
     public function index(Request $request){
-        return User::where('id','!=',1)->where('id','!=',$request->user()->id)->get();
+        $users= User::where('id','!=',1)->where('id','!=',$request->user()->id)->get();
+        $usersMessage=[];
+        foreach ($users as $user){
+            $chat=Chat::whereRaw("(userEnviado_id=".$request->user()->id." AND userRecibido_id=".$user->id.")OR(userEnviado_id=".$user->id." AND userRecibido_id=".$request->user()->id.")")->orderBy('fecha','desc')->first();
+            if($chat){
+                $user->message=$chat->message;
+                $user->fecha=$chat->fecha;
+            }else{
+                $user->message="";
+                $user->fecha="";
+            }
+            $usersMessage[]=$user;
+        }
+        return $usersMessage;
     }
-    public function show($id)
+    public function show($id,Request $request)
     {
-        $chats= Chat::whereRaw("(userEnviado_id=1 AND userRecibido_id=$id)OR(userEnviado_id=$id AND userRecibido_id=1)")->get();
+        $user_id=$request->user()->id;
+        $chats= Chat::whereRaw("(userEnviado_id=$user_id AND userRecibido_id=$id)OR(userEnviado_id=$id AND userRecibido_id=$user_id)")->get();
         return $chats;
     }
     public function login(Request $request){

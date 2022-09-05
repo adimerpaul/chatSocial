@@ -104,7 +104,7 @@
         <q-list bordered>
           <q-list>
             <q-item
-              v-for="(conversation, index) in users"
+              v-for="(conversation, index) in store.users"
               :key="conversation.id"
               clickable
               v-ripple
@@ -121,9 +121,8 @@
                   {{ conversation.person }}
                 </q-item-label>
                 <q-item-label class="conversation__summary" caption>
-                  <q-icon name="check" v-if="conversation.sent" />
-                  <q-icon name="not_interested" v-if="conversation.deleted" />
-                  {{ conversation.caption }}
+<!--                  <q-icon name="check" v-if="conversation.sent" />-->
+                  {{ conversation.message.substring(0, 30) }}
                 </q-item-label>
               </q-item-section>
 
@@ -136,24 +135,24 @@
             </q-item>
           </q-list>
           <q-separator />
-          <q-item-label header>Desconectados</q-item-label>
+<!--          <q-item-label header>Desconectados</q-item-label>-->
 
-          <q-item v-for="contact in offline" :key="contact.id" class="q-mb-sm" clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`">
-              </q-avatar>
-            </q-item-section>
+<!--          <q-item v-for="contact in offline" :key="contact.id" class="q-mb-sm" clickable v-ripple>-->
+<!--            <q-item-section avatar>-->
+<!--              <q-avatar>-->
+<!--                <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`">-->
+<!--              </q-avatar>-->
+<!--            </q-item-section>-->
 
-            <q-item-section>
-              <q-item-label>{{ contact.name }}</q-item-label>
-              <q-item-label caption lines="1">{{ contact.email }}</q-item-label>
-            </q-item-section>
+<!--            <q-item-section>-->
+<!--              <q-item-label>{{ contact.name }}</q-item-label>-->
+<!--              <q-item-label caption lines="1">{{ contact.email }}</q-item-label>-->
+<!--            </q-item-section>-->
 
-            <q-item-section side>
-              <q-icon name="chat_bubble" color="grey" />
-            </q-item-section>
-          </q-item>
+<!--            <q-item-section side>-->
+<!--              <q-icon name="chat_bubble" color="grey" />-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
         </q-list>
       </q-list>
     </q-drawer>
@@ -161,22 +160,14 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-footer>
-      <q-toolbar class="bg-grey-3 text-black row">
-        <!--          <q-form @submit.prevent="chatInsert">-->
-        <q-btn round flat icon="insert_emoticon" class="q-mr-sm" />
-        <q-input @keyup.enter="chatInsert" rounded outlined dense class="WAL__field col-grow q-mr-sm" bg-color="white" v-model="message" placeholder="Escriba un mensaje" />
-        <q-btn round flat icon="mic" :loading="loading" />
-        <!--          </q-form>-->
-      </q-toolbar>
-    </q-footer>
+
   </q-layout>
 </template>
 
 <script>
 import {useCounterStore} from "stores/example-store";
 import {date} from "quasar";
-import io from "socket.io-client";
+
 export default {
   name: 'MainLayout',
   data () {
@@ -188,27 +179,6 @@ export default {
       store:useCounterStore(),
       menu:false,
       message:'',
-      contacts : [ {
-        id: 1,
-        name: 'Ruddy Jedrzej',
-        email: 'rjedrzej0@discuz.net',
-        letter: 'R'
-      }, {
-        id: 2,
-        name: 'Mallorie Alessandrini',
-        email: 'malessandrini1@marketwatch.com',
-        letter: 'M'
-      }, {
-        id: 3,
-        name: 'Elisabetta Wicklen',
-        email: 'ewicklen2@microsoft.com',
-        letter: 'E'
-      }, {
-        id: 4,
-        name: 'Seka Fawdrey',
-        email: 'sfawdrey3@wired.com',
-        letter: 'S'
-      } ],
       offline : [
         {
           id: 5,
@@ -223,59 +193,22 @@ export default {
           avatar: 'avatar6.jpg'
         },
       ],
-      users : [
-        {
-          id: 1,
-          person: 'Razvan Stoenescu',
-          avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-          caption: 'I\'m working on Quasar!',
-          time: '15:00',
-          sent: true
-        },
-        {
-          id: 2,
-          person: 'Dan Popescu',
-          avatar: 'https://cdn.quasar.dev/team/dan_popescu.jpg',
-          caption: 'I\'m working on Quasar!',
-          time: '16:00',
-          sent: true
-        },
-        {
-          id: 3,
-          person: 'Jeff Galbraith',
-          avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-          caption: 'I\'m working on Quasar!',
-          time: '18:00',
-          sent: true
-        },
-        {
-          id: 4,
-          person: 'Allan Gaunt',
-          avatar: 'https://cdn.quasar.dev/team/allan_gaunt.png',
-          caption: 'I\'m working on Quasar!',
-          time: '17:00',
-          sent: true
-        }
-      ]
     }
   },
   created() {
-    this.socketInstance = io(process.env.API_SOCKET);
-    this.socketInstance.on(
-      "message:received", (data) => {
-        this.store.chats.push(data);
-      }
-    )
+
     if (this.store.users.length == 0) {
       this.$api.get('user').then(res=>{
+        // console.log(res.data)
         res.data.forEach(r=>{
+          // console.log(r)
           r.person=r.name,
             r.avatar=this.url+'../imagenes/'+r.avatar,
-            r.caption='I\'m working on Quasar!',
-            r.time='17:00',
+            // r.caption=r.message,
+            r.time=r.fecha.substring(11,16),
             r.sent=true
         })
-        this.users=res.data
+        this.store.users=res.data
         // if (this.users.length>0){
         //   this.user = this.users[0]
         //   this.chatGet()
@@ -284,30 +217,14 @@ export default {
     }
   },
   methods: {
-    chatInsert(){
-      if(this.message=='' || this.message==null){
-        return
-      }
-      let chat={
-        fecha:date.formatDate(new Date(),'YYYY-MM-DD HH:mm:ss'),
-        message:this.message,
-        userEnviado_id:this.store.user.id,
-        userRecibido_id:this.store.userChat.id,
-      }
-      this.store.chats.push(chat)
-      this.socketInstance.emit('message', chat);
-      this.$api.post('chat',{
-        message:this.message,
-        userEnviado_id:this.store.user.id,
-        userRecibido_id:this.store.userChat.id,
-      })
-      this.message=''
-    },
+
     setCurrentConversation (index) {
-      this.store.userChat=this.users[index]
+      this.store.userChat=this.store.users[index]
       this.store.chats=[]
       this.$api.get('user/'+this.store.userChat.id).then(res=>{
         this.store.chats=res.data
+        setTimeout(()=>{
+        })
       })
     },
     logout(){
@@ -327,6 +244,7 @@ export default {
           this.$api.defaults.headers.common['Authorization']=''
           this.store.user={}
           this.store.negocio={}
+          this.store.userChat={}
           localStorage.removeItem('tokenmi')
           this.store.isLoggedIn=false
           this.$router.push('/login')

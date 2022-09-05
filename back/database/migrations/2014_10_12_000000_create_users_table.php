@@ -21,6 +21,7 @@ return new class extends Migration
             $table->dateTime('fechaConexion');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->boolean('status')->nullable()->default(false);
             $table->string('avatar')->default('avatar.png');
             $table->string('externalId')->nullable();
             $table->string('externalAuth')->nullable();

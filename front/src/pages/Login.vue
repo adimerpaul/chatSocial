@@ -36,10 +36,10 @@
                     <div class="col-12 text-center q-py-none text-caption">
                       <div class="linea"><span>O INICIAR SESIÓN CON</span></div>
                     </div>
-                    <div class="col-6 q-pt-md q-pr-xs">
-                      <q-btn outline icon="fa-brands fa-facebook" color="primary" class="full-width "/>
-                    </div>
-                    <div class="col-6 q-pt-md q-pl-xs">
+<!--                    <div class="col-6 q-pt-md q-pr-xs">-->
+<!--                      <q-btn outline icon="fa-brands fa-facebook" color="primary" class="full-width "/>-->
+<!--                    </div>-->
+                    <div class="col-12 q-pt-md q-pl-xs">
                       <q-btn outline @click="useAuthProvider('google', null)" icon="fa-brands fa-google" color="primary" class="full-width "/>
                     </div>
                   </div>

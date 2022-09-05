@@ -2,6 +2,8 @@ import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import {useCounterStore} from "stores/example-store";
 import UniversalSocialauth from 'universal-social-auth'
+// import io from "socket.io-client";
+// import store from "../stores/example-store";
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -22,11 +24,20 @@ const options = {
   }
 }
 const Oauth = new UniversalSocialauth(axios, options)
-
+// let socketInstance = io(process.env.API_SOCKET);
+// socketInstance.on("message:received", (data) => {
+//   console.log(data)
+//     // this.store.chats = []
+//     // setTimeout(() => {
+//   useCounterStore.chats = [...this.store.chats,data]
+//     // },100)
+//   }
+// )
 export default boot(({ app ,router}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios
+  // app.config.globalProperties.$socket = socketInstance
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
   app.config.globalProperties.$Oauth = Oauth
